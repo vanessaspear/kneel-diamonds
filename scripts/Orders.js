@@ -1,8 +1,42 @@
-import { getOrders } from "./database.js"
+import { getOrders, getMetals, getSizes, getStyles } from "./database.js"
 
 const buildOrderListItem = (order) => {
+     // Remember that the function you pass to find() must return true/false
+     const metals = getMetals()
+
+     const foundMetal = metals.find(
+        (metal) => {
+            return metal.id === order.metalId
+        }
+    )
+    let totalCost = foundMetal.price
+
+    //Find the price for the chosen jewelry size
+    const sizes = getSizes()
+
+     const foundSize = sizes.find(
+        (size) => {
+            return size.id === order.sizeId
+        }
+    )
+    totalCost += foundSize.price
+
+    //Find the price for the chosen jewelry style
+    const styles = getStyles()
+
+     const foundStyle = styles.find(
+        (style) => {
+            return style.id === order.styleId
+        }
+    )
+    totalCost += foundStyle.price
+   
+    const costString = totalCost.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD"
+    })
     return `<li>
-        Order #${order.id} was placed on ${order.timestamp}
+        Order #${order.id} cost ${costString}
     </li>`
 }
 
